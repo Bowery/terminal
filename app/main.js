@@ -1,6 +1,6 @@
-var cp = require('child_process')
 var app = require('app')
 var BrowserWindow = require('browser-window')
+var Terminal = require('./Terminal')
 
 require('crash-reporter').start()
 
@@ -29,23 +29,7 @@ function handler (req, res) {
 }
 
 io.on('connection', function (socket) {
-  var shell = cp.spawn('/bin/bash', ['-i', '-l',], {
-    cwd: process.env.HOME,
-  })
-
-  shell.stdout.on('data', function (data) {
-    socket.emit('data', data)
-  })
-
-  shell.stderr.on('data', function (data) {
-    socket.emit('data', data)
-  })
-
-  socket.on('data', function (data) {
-    shell.stdin.write(data)
-  })
-
-  socket.on('error', function (error) {
-    console.log(error)
-  })
+  terminal = new Terminal()
+  terminal.socket = socket
+  terminal.init()
 })
