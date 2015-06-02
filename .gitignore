@@ -2,3 +2,4 @@ app/term.min.html
 build/
 debug.log
 .DS_Store
+node_modules

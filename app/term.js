@@ -34,7 +34,7 @@ window.onbeforeunload = function () {
 
   if (conn) {
     conn.onclose = null
-    conn.send('data: exit\r')
+    conn.emit('data', 'exit\r')
   }
 }
 
@@ -112,10 +112,7 @@ hterm.PreferenceManager = function (id) {
     this.cols = term.screenSize.width
     this.rows = term.screenSize.height
 
-    // Create websocket connection.
-    var query = 'cols=' + this.cols + '&rows=' + this.rows
-      + '&ip=' + qmark('ip') + '&user=' + qmark('user') + '&password=' + qmark('password')
-    this.conn = new WebSocket('ws://localhost:32055/_/ssh'+'?'+query)
+    this.conn = io('http://localhost:3000')
     this.conn.binaryType = 'arraybuffer'
 
     this.conn.onerror = function (err) {
@@ -130,20 +127,21 @@ hterm.PreferenceManager = function (id) {
       self.exit(0)
     }
 
-    this.conn.onmessage = function (ev) {
-      var dataView = new DataView(ev.data)
+    this.conn.on('data', function (data) {
+      var dataView = new DataView(data)
       var decoder = new TextDecoder('utf-8')
+      var decoded = decoder.decode(dataView)
 
-      self.io.writeUTF8(decoder.decode(dataView).slice('data: '.length))
-    }
+      self.io.writeUTF8(decoded)
+    })
 
     // Handle io events.
     this.io.setTerminalProfile('default')
     this.io.onVTKeystroke = function (data) {
-      self.conn && self.conn.send('data: ' + data)
+      self.conn && self.conn.emit('data', data)
     }
     this.io.sendString = function (data) {
-      self.conn && self.conn.send('data: ' + data)
+      self.conn && self.conn.emit('data', data)
     }
     this.io.onTerminalResize = function (cols, rows) {
       if (!self.conn || (self.cols == cols && self.rows == rows)) {
@@ -152,7 +150,7 @@ hterm.PreferenceManager = function (id) {
       self.cols = cols
       self.rows = rows
 
-      self.conn.send('event: resize ' + cols + ' ' + rows)
+      self.conn.emit('resize', {cols: cols, rows: rows})
     }
   }
 

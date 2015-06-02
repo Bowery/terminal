@@ -1,5 +1,8 @@
 {
-  "name"    : "terminal",
-  "version" : "0.0.1",
-  "main"    : "app/main.js"
+  "name": "terminal",
+  "version": "0.0.1",
+  "main": "app/main.js",
+  "dependencies": {
+    "socket.io": "^1.3.5"
+  }
 }
