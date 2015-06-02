@@ -29,8 +29,8 @@ function handler (req, res) {
 }
 
 io.on('connection', function (socket) {
-  var shell = cp.spawn('/bin/bash', ['-i', '-l'], {
-    cwd: process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE,
+  var shell = cp.spawn('/bin/bash', ['-i', '-l',], {
+    cwd: process.env.HOME,
   })
 
   shell.stdout.on('data', function (data) {
@@ -42,6 +42,10 @@ io.on('connection', function (socket) {
   })
 
   socket.on('data', function (data) {
-    shell.stdin.write(data);
+    shell.stdin.write(data)
+  })
+
+  socket.on('error', function (error) {
+    console.log(error)
   })
 })

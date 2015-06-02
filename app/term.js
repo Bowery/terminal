@@ -115,10 +115,6 @@ hterm.PreferenceManager = function (id) {
     this.conn = io('http://localhost:3000')
     this.conn.binaryType = 'arraybuffer'
 
-    this.conn.onerror = function (err) {
-      self.gotErr = true
-    }
-
     this.conn.onclose = function (ev) {
       if (ev.reason) {
         self.gotErr = true
@@ -127,11 +123,16 @@ hterm.PreferenceManager = function (id) {
       self.exit(0)
     }
 
+    this.conn.on('error', function (err) {
+      console.log(err)
+    })
+
     this.conn.on('data', function (data) {
       var dataView = new DataView(data)
       var decoder = new TextDecoder('utf-8')
       var decoded = decoder.decode(dataView)
 
+      decoded = decoded.replace(/\n/g, '\r\n')
       self.io.writeUTF8(decoded)
     })
 
@@ -139,9 +140,11 @@ hterm.PreferenceManager = function (id) {
     this.io.setTerminalProfile('default')
     this.io.onVTKeystroke = function (data) {
       self.conn && self.conn.emit('data', data)
+      self.io.writeUTF8(data)
     }
     this.io.sendString = function (data) {
       self.conn && self.conn.emit('data', data)
+      self.io.writeUTF8(data)
     }
     this.io.onTerminalResize = function (cols, rows) {
       if (!self.conn || (self.cols == cols && self.rows == rows)) {
