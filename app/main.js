@@ -1,6 +1,7 @@
 var app = require('app')
 var BrowserWindow = require('browser-window')
 var Terminal = require('./Terminal')
+var packages = require('./packages')
 
 require('crash-reporter').start()
 
@@ -30,6 +31,8 @@ function handler (req, res) {
 
 io.on('connection', function (socket) {
   terminal = new Terminal()
+  terminal.setPackages(packages)
+
   terminal.socket = socket
   terminal.init()
 })

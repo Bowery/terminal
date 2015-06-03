@@ -18,6 +18,12 @@ Terminal.prototype.shell = null
 Terminal.prototype.socket = null
 
 /**
+ * packages represents the packages in use.
+ * @param {Object}
+ */
+Terminal.prototype._packages = {}
+
+/**
  * init spawns the shell and sets event handlers.
  */
 Terminal.prototype.init = function () {
@@ -64,6 +70,22 @@ Terminal.prototype.handleSocketEvent = function (data) {
  */
 Terminal.prototype.handleSocketError = function (err) {
   console.log(err)
+}
+
+/**
+ * setPackages sets packages.
+ * @param {Object}
+ */
+Terminal.prototype.setPackages = function (packages) {
+  this._packages = packages
+}
+
+/**
+ * removePackage removes a package.
+ * @param {String}
+ */
+Terminal.prototype.removePackage = function (name) {
+  delete this._packages[name]
 }
 
 module.exports = Terminal
