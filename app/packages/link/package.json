@@ -1,8 +1,10 @@
 {
   "name": "link",
-  "main": "./lib/link.js",
+  "main": "link.js",
   "description": "Turn urls into clickable links.",
   "license": "MIT",
-  "actions": {},
+  "actions": {
+    "stdout": "handleStdout"
+  },
   "dependencies": {}
 }

@@ -9,16 +9,16 @@ Package.prototype._path = ''
 
 Package.prototype.config = {}
 
+Package.prototype.module = null
+
 Package.prototype.init = function () {
   var self = this
-  fs.readFile(this._path, function (err, data) {
-    if (err) throw err
-
-    self.config = JSON.parse(data.toString())
-  })
+  var configPath = path.join(this._path, 'package.json')
+  this.config = require(configPath)
+  this.module = require(path.join(this._path, this.config.main))
 }
 
-var link = new Package(path.join(__dirname, 'link', 'package.json'))
+var link = new Package(path.join(__dirname, 'link'))
 link.init()
 var packages = {
   'link': link
