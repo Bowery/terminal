@@ -4,6 +4,9 @@ all:
 	@echo "--> Starting Application"
 	@electron .
 
+test:
+	@echo "No tests..."
+
 deps:
 	npm install electron-prebuilt -g
 
