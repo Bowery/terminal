@@ -43,6 +43,12 @@ Terminal.prototype.init = function () {
  * @param {Object} data
  */
 Terminal.prototype.handleShellStdout = function (data) {
+  for (var pkgName in this._packages) {
+    var pkg = this._packages[pkgName]
+    if (pkg.config.actions.stdout)
+      pkg.module[pkg.config.actions.stdout](data)
+  }
+
   this.socket.emit('data', data)
 }
 
@@ -52,6 +58,12 @@ Terminal.prototype.handleShellStdout = function (data) {
  * @param {Object} data
  */
 Terminal.prototype.handleShellStderr = function (data) {
+  for (var pkgName in this._packages) {
+    var pkg = this._packages[pkgName]
+    if (pkg.config.actions.stderr)
+      pkg.module[pkg.config.actions.stderr](data)
+  }
+
   this.socket.emit('data', data)
 }
 
@@ -61,6 +73,12 @@ Terminal.prototype.handleShellStderr = function (data) {
  * @param {Object} data
  */
 Terminal.prototype.handleSocketEvent = function (data) {
+  for (var pkgName in this._packages) {
+    var pkg = this._packages[pkgName]
+    if (pkg.config.actions.stdin)
+      pkg.module[pkg.config.actions.stdin](data)
+  }
+
   this.shell.stdin.write(data)
 }
 
